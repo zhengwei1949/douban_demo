@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    *{
+        margin:0;
+        padding:0;
+    }
+    .searchForm{
+        margin-top:30px;
+        display: flex;
+        justify-content: center;
+        margin-bottom:20px;
+    }
+    .clearfix::after{content:".";display:block;height:0;clear:both;visibility:hidden}
+    .searchArea{
+        width:80%;
+        margin:0 auto;
+        text-align: center;
+        display:none;
+    }
+    .searchArea li{
+        margin-bottom:10px;
+        box-sizing: border-box;
+        float: left;
+        width:30%;
+        margin-right:5%;
+        list-style: none;
+        padding:20px;
+        border:1px solid black;
+        margin-right:20px;
+    }
+    .searchArea li:hover{
+        -moz-box-shadow:2px 0px 20px #333333; -webkit-box-shadow:2px 0px 20px #333333; box-shadow:2px 0px 20px #333333;
+    }
+    .searchArea li:nth-child(3n){
+        margin-right:0;
+    }
+    .searchArea li img{
+        width:80%;
+        height:350px;
+    }
+
+
+    .spinner {
+  width: 40px;
+  height: 40px;
+  background-color: #333;
+
+  margin: 100px auto;
+  -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
+  animation: sk-rotateplane 1.2s infinite ease-in-out;
+}
+
+@-webkit-keyframes sk-rotateplane {
+  0% { -webkit-transform: perspective(120px) }
+  50% { -webkit-transform: perspective(120px) rotateY(180deg) }
+  100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+}
+
+@keyframes sk-rotateplane {
+  0% { 
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg) 
+  } 50% { 
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg) 
+  } 100% { 
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+  }
+}
+    </style>
+</head>
+<body>
+    <form class="searchForm">
+        <input type="text" id="txt">
+        <input type="button" value="搜索" id="btn">
+    </form>
+    <ul class="searchArea clearfix" id="content">
+        <li>
+            <div class="spinner"></div>
+        </li>
+    </ul>
+    <script src="./jquery.js"></script>
+    <script src="./art-template.js"></script>
+    <script type="text/template" id="tpl">
+        <%for(var i=0;i<subjects.length;i++){%>
+            <li>
+                <img src="<%=subjects[i]['images']['large']%>" alt="" onerror="this.src='./a.jpg'">
+            </li>
+        <%}%>
+    </script>
+    <script>
+    $(function(){
+        $('#btn').click(function(){
+            var searchValue = $('#txt').val();
+            $.ajax({
+                url:'https://api.douban.com/v2/movie/search',
+                data:{
+                    q:searchValue
+                },
+                beforeSend:function(){
+                    $('#content').show();
+                },
+                dataType:'jsonp',
+                success:function(data){
+                    // console.log(data);
+                    var html = template('tpl',data);
+                    console.log(html);
+                    $('#content').html(html);
+                    $('.spinner').hide();
+                }
+            })
+        })
+    })
+    </script>
+</body>
+</html>
